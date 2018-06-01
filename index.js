@@ -1,8 +1,17 @@
-'use strict';
+"use strict";
 
-var React = require('react'),
-    PropTypes = require('prop-types'),
-    withSideEffect = require('react-side-effect');
+var React = require("react"),
+  PropTypes = require("prop-types"),
+  withSideEffect = require("react-side-effect");
+
+function isIOS() {
+  const userAgent = getUserAgent();
+  return (
+    userAgent.match(/iPad/i) ||
+    userAgent.match(/iPhone/i) ||
+    userAgent.match(/iPod/i)
+  );
+}
 
 function reducePropsToState(propsList) {
   var innermostProps = propsList[propsList.length - 1];
@@ -12,16 +21,29 @@ function reducePropsToState(propsList) {
 }
 
 function handleStateChangeOnClient(title) {
-  var nextTitle = title || '';
+  var nextTitle = title || "";
   if (nextTitle !== document.title) {
     document.title = nextTitle;
+    if (isIOS()) {
+      const iframe = document.createElement("iframe");
+      iframe.style.display = "none";
+      iframe.setAttribute("src", "/favicon.ico");
+      const d = function() {
+        setTimeout(function() {
+          iframe.removeEventListener("load", d);
+          document.body.removeChild(iframe);
+        }, 0);
+      };
+      iframe.addEventListener("load", d);
+      document.body.appendChild(iframe);
+    }
   }
 }
 
 function DocumentTitle() {}
 DocumentTitle.prototype = Object.create(React.Component.prototype);
 
-DocumentTitle.displayName = 'DocumentTitle';
+DocumentTitle.displayName = "DocumentTitle";
 DocumentTitle.propTypes = {
   title: PropTypes.string.isRequired
 };
@@ -34,7 +56,6 @@ DocumentTitle.prototype.render = function() {
   }
 };
 
-module.exports = withSideEffect(
-  reducePropsToState,
-  handleStateChangeOnClient
-)(DocumentTitle);
+module.exports = withSideEffect(reducePropsToState, handleStateChangeOnClient)(
+  DocumentTitle
+);
