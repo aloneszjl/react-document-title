@@ -27,7 +27,7 @@ function handleStateChangeOnClient(title) {
     if (isIOS()) {
       const iframe = document.createElement("iframe");
       iframe.style.display = "none";
-      iframe.setAttribute("src", "/favicon.ico");
+      iframe.setAttribute("src", "./favicon.ico");
       const d = function() {
         setTimeout(function() {
           iframe.removeEventListener("load", d);
