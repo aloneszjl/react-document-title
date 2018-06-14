@@ -5,7 +5,7 @@ var React = require("react"),
   withSideEffect = require("react-side-effect");
 
 function isIOS() {
-  const userAgent = getUserAgent();
+  var userAgent = getUserAgent();
   return (
     userAgent.match(/iPad/i) ||
     userAgent.match(/iPhone/i) ||
@@ -25,10 +25,10 @@ function handleStateChangeOnClient(title) {
   if (nextTitle !== document.title) {
     document.title = nextTitle;
     if (isIOS()) {
-      const iframe = document.createElement("iframe");
+      var iframe = document.createElement("iframe");
       iframe.style.display = "none";
       iframe.setAttribute("src", "/tcb/favicon.ico");
-      const d = function() {
+      var d = function() {
         setTimeout(function() {
           iframe.removeEventListener("load", d);
           document.body.removeChild(iframe);
